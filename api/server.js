@@ -40,6 +40,7 @@ const corsOptions = {
     "http://localhost:5173",
     "https://diyere.vercel.app",
     "https://www.faclothing.vercel.app",
+    "https://www.faclothing-admin.vercel.app",
     "https://faclothing.vercel.app",
     "https://dashboard.diyere.com",
     "https://dbwearsadmin.vercel.app",
