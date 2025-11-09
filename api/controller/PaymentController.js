@@ -1,0 +1,71 @@
+import axios from "axios";
+import Stripe from "stripe";
+import dotenv from "dotenv";
+
+dotenv.config();
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+// POST /api/payment/create-checkout-session
+export const createCheckoutSession = async (req, res) => {
+  try {
+    const { cartItems } = req.body;
+
+    // Convert cart items to Stripe line items
+    const line_items = cartItems.map((item) => ({
+      price_data: {
+        currency: "usd",
+        product_data: {
+          name: item.name,
+          images: item.images || [],
+        },
+        unit_amount: Math.round(item.price * 100), // in cents
+      },
+      quantity: item.quantity,
+    }));
+
+    // Create Checkout session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items,
+      mode: "payment",
+      success_url: `${process.env.FRONTEND_URL}/order-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL}/order-failed`,
+    });
+
+    res.status(200).json({ id: session.id, url: session.url });
+  } catch (err) {
+    console.error("Stripe Error:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+// Initialize Paystack transaction
+export const initializePayment = async (req, res) => {
+  try {
+    const { email, amount } = req.body;
+
+    if (!email || !amount) {
+      return res.status(400).json({ message: "Email and amount are required" });
+    }
+
+    const response = await axios.post(
+      "https://api.paystack.co/transaction/initialize",
+      {
+        email,
+        amount: amount * 100, // Paystack expects amount in kobo/cents
+      },
+      {
+        headers: {
+          Authorization: `Bearer sk_test_79242b93426b598a9b3e456fb0a03ac56d114e47`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    res.json(response.data); // Send access_code and authorization_url to frontend
+  } catch (error) {
+    console.error("Paystack initialize error:", error.response?.data || error.message);
+    res.status(500).json({ message: "Payment initialization failed" });
+  }
+};
