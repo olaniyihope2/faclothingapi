@@ -43,6 +43,8 @@ const corsOptions = {
     "https://www.faclothing.vercel.app",
     "https://www.faclothing-admin.vercel.app",
     "https://faclothing.vercel.app",
+    "https://rayofaa.com",
+    "https://www.rayofaa.com",
     "https://faclothing-admin.vercel.app",
     "https://dashboard.diyere.com",
     "https://dbwearsadmin.vercel.app",

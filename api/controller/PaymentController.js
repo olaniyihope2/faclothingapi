@@ -6,26 +6,61 @@ dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // POST /api/payment/create-checkout-session
+// export const createCheckoutSession = async (req, res) => {
+//   try {
+//     const { cartItems } = req.body;
+
+//     // Convert cart items to Stripe line items
+//     const line_items = cartItems.map((item) => ({
+//       price_data: {
+//         currency: "usd",
+//         product_data: {
+//           name: item.name,
+//           images: item.images || [],
+//         },
+//         unit_amount: Math.round(item.price * 100), // in cents
+//       },
+//       quantity: item.quantity,
+//     }));
+
+//     // Create Checkout session
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ["card", "klarna"],
+//       line_items,
+//       mode: "payment",
+//       success_url: `${process.env.FRONTEND_URL}/order-success?session_id={CHECKOUT_SESSION_ID}`,
+//       cancel_url: `${process.env.FRONTEND_URL}/order-failed`,
+//     });
+
+//     res.status(200).json({ id: session.id, url: session.url });
+//   } catch (err) {
+//     console.error("Stripe Error:", err.message);
+//     res.status(500).json({ error: err.message });
+//   }
+// };
 export const createCheckoutSession = async (req, res) => {
   try {
-    const { cartItems } = req.body;
+    const { cartItems, paymentMethod } = req.body;
 
-    // Convert cart items to Stripe line items
     const line_items = cartItems.map((item) => ({
       price_data: {
-        currency: "usd",
+        // currency: "usd",
+        currency: "eur",
         product_data: {
           name: item.name,
           images: item.images || [],
         },
-        unit_amount: Math.round(item.price * 100), // in cents
+        unit_amount: Math.round(item.price * 100),
       },
       quantity: item.quantity,
     }));
 
-    // Create Checkout session
+    // Use only the selected payment method
+    const payment_method_types =
+      paymentMethod === "klarna" ? ["klarna"] : ["card"];
+
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+      payment_method_types,
       line_items,
       mode: "payment",
       success_url: `${process.env.FRONTEND_URL}/order-success?session_id={CHECKOUT_SESSION_ID}`,
