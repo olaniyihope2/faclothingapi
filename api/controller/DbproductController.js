@@ -322,7 +322,7 @@ export const updateProduct = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id);
+    await DbProduct.findByIdAndDelete(req.params.id);
     res.status(204).end();
   } catch (err) {
     res.status(500).json({ message: err.message });
