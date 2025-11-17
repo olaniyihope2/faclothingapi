@@ -82,6 +82,7 @@ export const createProduct = async (req, res) => {
         isBestSeller = false,   // 👈
   isTrending = false,     // 👈
   isFeatured = false, 
+  isSpecial = false, 
     } = req.body;
 const parsedDecorationMethods = Array.isArray(decorationMethods)
   ? decorationMethods.map((method) =>
@@ -133,6 +134,7 @@ const parsedDecorationMethods = Array.isArray(decorationMethods)
        isBestSeller,
   isTrending,
   isFeatured,
+  isSpecial,
     });
 
     // Fetch category, parent, and grandparent
