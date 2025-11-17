@@ -435,3 +435,16 @@ export const getFeaturedProducts = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+export const getSpecialProducts = async (req, res) => {
+  try {
+    const products = await DbProduct.find({ isSpecial: true })
+      .populate("category")
+      .populate("brand", "name image description")
+      .lean();
+
+    const enriched = await enrichProducts(products);
+    res.json(enriched);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
