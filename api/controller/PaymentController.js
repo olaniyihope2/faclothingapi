@@ -38,24 +38,63 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 //     res.status(500).json({ error: err.message });
 //   }
 // };
+// export const createCheckoutSession = async (req, res) => {
+//   try {
+//     const { cartItems, paymentMethod } = req.body;
+
+//     const line_items = cartItems.map((item) => ({
+//       price_data: {
+//         // currency: "usd",
+//         currency: "eur",
+//         product_data: {
+//           name: item.name,
+//           images: item.images || [],
+//         },
+//         unit_amount: Math.round(item.price * 100),
+//       },
+//       quantity: item.quantity,
+//     }));
+
+//     // Use only the selected payment method
+//     const payment_method_types =
+//       paymentMethod === "klarna" ? ["klarna"] : ["card"];
+
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types,
+//       line_items,
+//       mode: "payment",
+//       success_url: `${process.env.FRONTEND_URL}/order-success?session_id={CHECKOUT_SESSION_ID}`,
+//       cancel_url: `${process.env.FRONTEND_URL}/order-failed`,
+//     });
+
+//     res.status(200).json({ id: session.id, url: session.url });
+//   } catch (err) {
+//     console.error("Stripe Error:", err.message);
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
 export const createCheckoutSession = async (req, res) => {
   try {
     const { cartItems, paymentMethod } = req.body;
 
-    const line_items = cartItems.map((item) => ({
-      price_data: {
-        // currency: "usd",
-        currency: "eur",
-        product_data: {
-          name: item.name,
-          images: item.images || [],
-        },
-        unit_amount: Math.round(item.price * 100),
-      },
-      quantity: item.quantity,
-    }));
+    const line_items = cartItems.map((item) => {
+      // Use discountPrice if available, else price
+      const price = item.product?.discountPrice ?? item.product?.price ?? 0;
 
-    // Use only the selected payment method
+      return {
+        price_data: {
+          currency: "usd", // or "eur" as needed
+          product_data: {
+            name: item.product?.name || "Unnamed Product",
+            images: item.product?.image ? [item.product.image] : [],
+          },
+          unit_amount: Math.round(price * 100), // Stripe expects cents
+        },
+        quantity: item.quantity || 1,
+      };
+    });
+
     const payment_method_types =
       paymentMethod === "klarna" ? ["klarna"] : ["card"];
 
@@ -73,7 +112,6 @@ export const createCheckoutSession = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-
 
 // Initialize Paystack transaction
 export const initializePayment = async (req, res) => {
