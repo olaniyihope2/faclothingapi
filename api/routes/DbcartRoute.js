@@ -3,7 +3,7 @@ import express from "express";
 import multer from "multer";
 import multerS3 from "multer-s3";
 import { S3Client } from "@aws-sdk/client-s3";
-import { getCart, saveCart } from "../controller/DbcartController.js";
+import {  assignUserToCart, getCartByCartId, getCartByUser, initCart, saveCart } from "../controller/DbcartController.js";
 
 
 const router = express.Router();
@@ -49,8 +49,11 @@ const upload = multer({
 });
 
 // Routes
-router.get("/", getCart);   // GET /api/cart?cartId=xxxx
-router.post("/", saveCart); // POST /api/cart
 
+router.post("/cart/init", initCart);
+router.get("/cart/user", getCartByUser);           // NEW
+router.get("/cart", getCartByCartId);
+router.post("/cart", saveCart);
+router.post("/cart/assign", assignUserToCart);
 
 export default router;
