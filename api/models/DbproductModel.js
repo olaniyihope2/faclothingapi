@@ -11,7 +11,7 @@ const productSchema = new mongoose.Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "DbCategory",
-      required: true,
+  
     },
 
     description: {
@@ -22,7 +22,7 @@ const productSchema = new mongoose.Schema(
 
     price: {
       type: Number,
-      required: true,
+
     },
 
     discountPrice: {
@@ -60,7 +60,7 @@ decorationMethods: [
     name: {
       type: String,
       enum: ["Printed", "Embroidered", "Debossed"],
-      required: true,
+    
     },
     note: {
       type: String, // e.g. "No Minimum"
