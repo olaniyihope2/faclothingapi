@@ -68,10 +68,10 @@ decorationMethods: [
   },
 ],
 
-    weight: {
-      type: String,
-      enum: ["Lightweight", "Mediumweight", "Heavyweight"],
-    },
+weight: {
+  type: Number, // weight in KG
+  min: 0,
+},
 
     minimumQuantity: {
       type: Number, // Minimum order quantity
