@@ -29,19 +29,28 @@ const productSchema = new mongoose.Schema(
       type: Number,
     },
 
-    quantityAvailable: {
-      type: Number,
-      default: 0,
-    },
+
 
     // 👕 Clothing-specific fields
     color: {
       type: [String], // multiple colors e.g. ["red", "blue"]
     },
 
-    size: {
-      type: [String], // ["S", "M", "L", "XL", "XXL"]
+  
+sizes: [
+  {
+    label: {
+      type: String,
+      enum: ["XXS", "XS", "S", "M", "L", "XL", "XXL"],
+      required: true,
     },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+  },
+],
 
     material: {
       type: String, // e.g., Cotton, Polyester, Blend
