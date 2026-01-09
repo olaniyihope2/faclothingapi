@@ -32,44 +32,49 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+app.use((req, res, next) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  next();
+});
+
 const allowedOrigins = [
-  "http://localhost:3001",
   "http://localhost:3000",
-  "http://localhost:3004",
   "http://localhost:5173",
-  "https://diyere.vercel.app",
-  "https://faclothing.vercel.app",
-  "https://faclothing-admin.vercel.app",
   "https://admin.rayofaa.com",
   "https://www.rayofaa.com",
   "https://rayofaa.com",
+  "https://faclothing.vercel.app",
+  "https://faclothing-admin.vercel.app",
   "https://dashboard.diyere.com",
-  "https://dbwearsadmin.vercel.app",
-  "https://dbwears.vercel.app",
-  "https://diyereadmin.vercel.app",
-  "https://admin.diyere.com",
 ];
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // allow server-to-server / Postman
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
 
-    if (allowedOrigins.includes(origin)) {
-      callback(null, origin); // 👈 return EXACT origin
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-API-Key", "X-Api-Key"],
-};
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
 
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-API-Key, X-Api-Key"
+  );
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
 
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204); // 👈 IMPORTANT
+  }
+
+  next();
+});
+
+
 
 app.use(
   session({
