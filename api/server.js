@@ -32,32 +32,41 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const allowedOrigins = [
+  "http://localhost:3001",
+  "http://localhost:3000",
+  "http://localhost:3004",
+  "http://localhost:5173",
+  "https://diyere.vercel.app",
+  "https://faclothing.vercel.app",
+  "https://faclothing-admin.vercel.app",
+  "https://admin.rayofaa.com",
+  "https://www.rayofaa.com",
+  "https://rayofaa.com",
+  "https://dashboard.diyere.com",
+  "https://dbwearsadmin.vercel.app",
+  "https://dbwears.vercel.app",
+  "https://diyereadmin.vercel.app",
+  "https://admin.diyere.com",
+];
 
-// ✅ Clean CORS
 const corsOptions = {
-  origin: [
-    "http://localhost:3001",
-    "http://localhost:3000",
-    "http://localhost:3004",
-    "http://localhost:5173",
-    "https://diyere.vercel.app",
-    "https://www.faclothing.vercel.app",
-    "https://www.faclothing-admin.vercel.app",
-    "https://faclothing.vercel.app",
-    "https://rayofaa.com",
-    "https://admin.rayofaa.com",
-    "https://www.rayofaa.com",
-    "https://faclothing-admin.vercel.app",
-    "https://dashboard.diyere.com",
-    "https://dbwearsadmin.vercel.app",
-    "https://dbwears.vercel.app",
-    "https://diyereadmin.vercel.app",
-    "https://admin.diyere.com",
-  ],
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // allow server-to-server / Postman
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, origin); // 👈 return EXACT origin
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-API-Key", "X-Api-Key"],
-  credentials: true,
 };
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
