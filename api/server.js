@@ -41,6 +41,7 @@ app.use((req, res, next) => {
 
 const allowedOrigins = [
   "http://localhost:3002",
+  "http://localhost:3000",
   "http://localhost:5173",
   "https://admin.rayofaa.com",
   "https://www.rayofaa.com",

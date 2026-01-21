@@ -48,7 +48,10 @@ export const createCategory = async (req, res) => {
     console.log("BODY:", req.body);
     console.log("FILE:", req.file);
 
-    const { name, parent, icon } = req.body;
+   
+    const { name, parent } = req.body;
+const icon = req.body.icon || null;
+
     let image = null;
 
     if (req.file) {
