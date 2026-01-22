@@ -9,7 +9,8 @@ import {
 getTrendingProducts,
 getBestSellers,
 getFeaturedProducts,
-getSpecialProducts
+getSpecialProducts,
+getProductBySlug
 } from "../controller/DbproductController.js";
 import multer from "multer";
 import multerS3 from "multer-s3";
@@ -79,6 +80,8 @@ router.post(
 );
 router.get("/products", getProducts);
 router.get("/product/:id", getProductById);
+router.get("/product/slug/:slug", getProductBySlug);
+
 // Get products by category
 router.get("/products/category/:categoryId", getProductsByCategory);
 router.get("/products/best-sellers", getBestSellers);

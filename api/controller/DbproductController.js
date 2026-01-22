@@ -333,6 +333,17 @@ export const getProductById = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+export const getProductBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const product = await DbProduct.findOne({ slug }).populate('category').lean();
+    if (!product) return res.status(404).json({ error: "Product not found" });
+    res.status(200).json(product);
+  } catch (err) {
+    console.error("Failed to fetch product by slug:", err);
+    res.status(500).json({ error: "Failed to fetch product" });
+  }
+};
 
 
 // export const updateProduct = async (req, res) => {

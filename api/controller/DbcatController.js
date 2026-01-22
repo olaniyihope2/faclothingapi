@@ -192,3 +192,19 @@ export const getCategoryById = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch category" });
   }
 };
+export const getCategoryBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const category = await DbCategory.findOne({ slug }).lean();
+
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+
+    res.status(200).json(category);
+  } catch (err) {
+    console.error("Failed to fetch category by slug:", err);
+    res.status(500).json({ error: "Failed to fetch category" });
+  }
+};
