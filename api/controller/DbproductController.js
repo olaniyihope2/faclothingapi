@@ -1,169 +1,6 @@
 import DbProduct from "../models/DbproductModel.js"; // Replace with your actual model
 import DbCategory from "../models/DbbookCatModel.js"
 
-// export const createProduct = async (req, res) => {
-//   try {
-//     const {
-//       name,
-//       category,
-//       description,
-//       price,
-//       discountPrice,
-//       quantityAvailable,
-//       color,
-//       size,
-//       material,
-//       type,
-//       tag,
-//       decorationMethods,
-//       weight,
-//       minimumQuantity,
-//       brand,
-//       features,
-//       closureType,
-//       reviews = [],
-//     } = req.body;
-
-//     // Handle image uploads (from AWS S3 or Multer-S3)
-//     const imageUrls = req.files?.images
-//       ? req.files.images.map((file) => file.location)
-//       : [];
-
-//     const newProduct = await Product.create({
-//       name,
-//       category,
-//       description,
-//       price,
-//       discountPrice,
-//       quantityAvailable,
-//       color,
-//       size,
-//       material,
-//       type,
-//       tag,
-//       decorationMethods,
-//       weight,
-//       minimumQuantity,
-//       brand,
-//       features,
-//       closureType,
-//       images: imageUrls,
-//       reviews,
-//       productDate: Date.now(),
-//     });
-
-//     res.status(201).json(newProduct);
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
-
-// export const createProduct = async (req, res) => {
-//   try {
-//     const {
-//       name,
-//       category, // category id is expected here (Trucker Hat _id)
-//       description,
-//       price,
-//       discountPrice,
-//       quantityAvailable,
-//       color,
-//       sizes: parsedSizes, 
-//       material,
-//       type,
-//       tag,
-//       decorationMethods,
-//       weight,
-//       minimumQuantity,
-//       brand,
-//       features,
-//       closureType,
-//       reviews = [],
-//         isBestSeller = false,   // 👈
-//   isTrending = false,     // 👈
-//   isFeatured = false, 
-//   isSpecial = false, 
-//     } = req.body;
-// const parsedDecorationMethods = Array.isArray(decorationMethods)
-//   ? decorationMethods.map((method) =>
-//       typeof method === "string"
-//         ? { name: method } // fallback if frontend sends only string
-//         : method // already an object { name, note }
-//     )
-//   : decorationMethods
-//   ? [
-//       typeof decorationMethods === "string"
-//         ? { name: decorationMethods }
-//         : decorationMethods,
-//     ]
-//   : [];
-//   if (req.body.decorationMethods) {
-//   req.body.decorationMethods = req.body.decorationMethods.filter(
-//     (m) => m.name && m.name.trim() !== ""
-//   );
-// }
-
-
-//     // Handle image uploads (AWS S3 or Multer-S3)
-//     const imageUrls = req.files?.images
-//       ? req.files.images.map((file) => file.location)
-//       : [];
-
-//     // Create product
-//     const newProduct = await DbProduct.create({
-//       name,
-//       category,
-//       description,
-//       price,
-//       discountPrice,
-//       quantityAvailable,
-//       color,
-//       sizes: parsedSizes, 
-//       material,
-//       type,
-//       tag,
-//        decorationMethods: parsedDecorationMethods,
-//       weight,
-//       minimumQuantity,
-//       brand,
-//       features,
-//       closureType,
-//       images: imageUrls,
-//       reviews,
-//       productDate: Date.now(),
-//        isBestSeller,
-//   isTrending,
-//   isFeatured,
-//   isSpecial,
-//     });
-
-//     // Fetch category, parent, and grandparent
-//     let categoryData = await DbCategory.findById(category).lean();
-//     let parentCategory = null;
-//     let grandParentCategory = null;
-
-//     if (categoryData?.parent) {
-//       parentCategory = await DbCategory.findById(categoryData.parent).lean();
-
-//       if (parentCategory?.parent) {
-//         grandParentCategory = await DbCategory.findById(
-//           parentCategory.parent
-//         ).lean();
-//       }
-//     }
-
-//     res.status(201).json({
-//       ...newProduct.toObject(),
-//       category: categoryData,
-//       parentCategory,
-//       grandParentCategory,
-//     });
-//   } catch (err) {
-//     console.error("❌ Backend error creating product:", err); // <--- add this
-//     res.status(500).json({ message: err.message });
-//   }
-// };
-
 export const createProduct = async (req, res) => {
   try {
     const {
@@ -172,7 +9,6 @@ export const createProduct = async (req, res) => {
       description,
       price,
       discountPrice,
-      color,
       material,
       type,
       tag,
@@ -219,15 +55,14 @@ export const createProduct = async (req, res) => {
       category,
       description,
       price,
-      discountPrice,
+      discountPrice: null,
       quantityAvailable: totalQuantity,
-      color,
       sizes: parsedSizes,
       material,
       type,
       tag,
       decorationMethods: parsedDecorationMethods,
-      weight,
+    weight: weight ? Number(weight) : 0,
       minimumQuantity,
       brand,
       features,
