@@ -39,17 +39,32 @@ app.use((req, res, next) => {
   next();
 });
 
-const allowedOrigins = [
-  "http://localhost:3002",
-  "http://localhost:3000",
-  "http://localhost:5173",
-  "https://admin.rayofaa.com",
-  "https://www.rayofaa.com",
-  "https://rayofaa.com",
-  "https://faclothing.vercel.app",
-  "https://faclothing-admin.vercel.app",
-  "https://dashboard.diyere.com",
-];
+const corsOptions = {
+  origin: function (origin, callback) {
+    // allow server-to-server, Postman, Vercel cron, etc
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Origin",
+    "X-Requested-With",
+    "Content-Type",
+    "Accept",
+    "Authorization",
+    "X-API-Key",
+  ],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // 👈 VERY IMPORTANT
+
 
 app.use((req, res, next) => {
   const origin = req.headers.origin;
