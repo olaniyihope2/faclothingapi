@@ -157,7 +157,8 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 /* -------------------- CORS -------------------- */
 const allowedOrigins = [
   "https://admin.rayofaa.com",
-  "https://rayofaa.com",
+ "https://rayofaa.com",
+  "https://www.rayofaa.com",
   "http://localhost:3000",
 ];
 
